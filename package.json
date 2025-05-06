@@ -1,0 +1,31 @@
+{
+  "name": "devlinker",
+  "version": "1.0.0",
+  "description": "a platform for developers to connect",
+  "main": "index.js",
+  "scripts": {
+    "start":"node src/app.js",
+    "dev":"nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abhishekkumar175/DevLinker.git"
+  },
+  "keywords": [
+    "node.js",
+    "javascript",
+    "react.js",
+    "express.js",
+    "mongodb"
+  ],
+  "author": "Abhishek Kumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abhishekkumar175/DevLinker/issues"
+  },
+  "homepage": "https://github.com/Abhishekkumar175/DevLinker#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
