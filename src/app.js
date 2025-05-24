@@ -1,18 +1,21 @@
 const express = require('express');
 const connectDB = require('./config/database');
 const app= express();
-const User = require('./models/user');
+require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
-app.post("/signup", async (req, res) => {
-    //creating a new instance of the user model
-    
-  try {
-    await user.save();
-    res.send("User Created");
-  } catch(err){
-    res.status(400).send("Error creating user: " + err.message);
-  }
-});
+app.use(express.json());
+app.use(cookieParser());
+
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/request");
+const userRouter = require("./routes/user");
+
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter);
 
 
 
