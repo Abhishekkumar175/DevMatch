@@ -11,7 +11,7 @@ const createSendEmailCommand = (toAddress, fromAddress, subject, body) => {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: `<h1>${body}</h1>`,
+          Data: `<div><strong>${body}</strong></div>`,
         },
         Text: {
           Charset: "UTF-8",
