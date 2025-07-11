@@ -9,15 +9,15 @@ const messageSchema = new mongoose.Schema(
     },
     text: {
       type: String,
-      required: false, // ⬅️ made optional
+      required: false, 
     },
     imageUrl: {
       type: String,
-      required: false, // ⬅️ new field for image support
+      required: false, 
     },
     seen: {
       type: Boolean,
-      default: false, // ⬅️ new field for seen status
+      default: false,
     },
   },
   { timestamps: true }
