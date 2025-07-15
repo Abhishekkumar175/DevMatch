@@ -6,6 +6,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const sendEmail = require("../utils/sendEmail");
 
+// ✅ SEND connection request
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
@@ -33,6 +34,7 @@ requestRouter.post(
           { fromUserId: toUserId, toUserId: fromUserId },
         ],
       });
+
       if (existingConnectionRequest) {
         return res
           .status(400)
@@ -47,7 +49,7 @@ requestRouter.post(
 
       const data = await connectionRequest.save();
 
-      const emailRes = await sendEmail.run(
+      await sendEmail.run(
         `${req.user.firstName} sent you a connection request`,
         `${req.user.firstName} is interested in connecting with you on DevMatch.`,
         toUser.emailId
@@ -64,6 +66,7 @@ requestRouter.post(
   }
 );
 
+// ✅ REVIEW connection request
 requestRouter.post(
   "/request/review/:status/:requestId",
   userAuth,
@@ -74,7 +77,7 @@ requestRouter.post(
 
       const allowedStatus = ["accepted", "rejected"];
       if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ messaage: "Status not allowed!" });
+        return res.status(400).json({ message: "Status not allowed!" });
       }
 
       const connectionRequest = await ConnectionRequest.findOne({
@@ -82,6 +85,7 @@ requestRouter.post(
         toUserId: loggedInUser._id,
         status: "interested",
       });
+
       if (!connectionRequest) {
         return res
           .status(404)
@@ -89,7 +93,6 @@ requestRouter.post(
       }
 
       connectionRequest.status = status;
-
       const data = await connectionRequest.save();
 
       res.json({ message: "Connection request " + status, data });
@@ -98,5 +101,35 @@ requestRouter.post(
     }
   }
 );
+
+// ✅ NEW: Get all accepted connections of current user
+requestRouter.get("/user/connections", userAuth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const connections = await ConnectionRequest.find({
+      status: "accepted",
+      $or: [{ fromUserId: userId }, { toUserId: userId }],
+    })
+      .populate("fromUserId")
+      .populate("toUserId");
+
+    const validConnections = connections.filter(
+      (conn) => conn.fromUserId && conn.toUserId
+    );
+
+    const result = validConnections.map((conn) => {
+      const otherUser =
+        conn.fromUserId._id.toString() === userId.toString()
+          ? conn.toUserId
+          : conn.fromUserId;
+      return otherUser;
+    });
+
+    res.status(200).json({ data: result });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
+});
 
 module.exports = requestRouter;
